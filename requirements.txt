@@ -1,0 +1,41 @@
+# =============================================================================
+# Core crop-yield resilience pipeline (no PyTorch required)
+# -----------------------------------------------------------------------------
+# This file installs everything the ML/data pipeline needs. Installing it does
+# NOT require PyTorch, a GPU, or CUDA. `scikit-image` is only used by the CNN
+# *demonstration* (hpc/downscale_cnn.py); it is kept here so the demo can run
+# once torch is added manually.
+#
+# Optional: the CNN demonstration also needs PyTorch. It is intentionally NOT
+# pinned here because the correct wheel depends on your CUDA/CPU setup. Install
+# it separately after this file (see the PyTorch section at the bottom).
+# =============================================================================
+
+# Data science / ML
+pandas==2.2.3
+numpy==2.1.3
+scikit-learn==1.5.2
+matplotlib==3.9.2
+seaborn==0.13.2
+scikit-image==0.24.0
+
+# Testing / tooling
+pytest==8.3.3
+
+# -----------------------------------------------------------------------------
+# Optional CNN demonstration (hpc/downscale_cnn.py)
+# -----------------------------------------------------------------------------
+# The core pipeline does not need this. To run the CNN demo, install PyTorch
+# for your hardware — NOT from the generic index, but from the official wheel
+# index so the CUDA/cpu build is correct. For example:
+#
+#   CPU:
+#     pip install torch --index-url https://download.pytorch.org/whl/cpu
+#
+#   CUDA 12.x (match your driver version):
+#     pip install torch --index-url https://download.pytorch.org/whl/cu121
+#
+# or follow the official instructions at https://pytorch.org/get-started/locally
+# Always re-run `python -m src.pipeline.run_pipeline` after changes to confirm
+# the core pipeline still imports without torch present.
+# -----------------------------------------------------------------------------

@@ -1,0 +1,41 @@
+[project]
+name = "crop-resilience-downscaling"
+version = "0.1.0"
+description = "AI-driven climate downscaling and crop resilience mapping"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+# Core crop-yield resilience pipeline (no PyTorch required).
+# Version floors mirror the pinned versions in requirements.txt; for exact
+# reproducible installs prefer `pip install -r requirements.txt`.
+dependencies = [
+    "pandas>=2.2.3",
+    "numpy>=2.1.3",
+    "scikit-learn>=1.5.2",
+    "matplotlib>=3.9.2",
+    "seaborn>=0.13.2",
+    "scikit-image>=0.24.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3.3"]
+
+# Optional CNN demonstration (hpc/downscale_cnn.py). Installed separately from
+# the official PyTorch wheel index so the CPU/CUDA build is correct:
+#   pip install ".[cnn]" --index-url https://download.pytorch.org/whl/cpu
+# or follow https://pytorch.org/get-started/locally. Do not rely on this extra
+# being resolvable from the default index (torch is not on PyPI for all builds).
+cnn = ["torch"]
+
+[project.scripts]
+crop-pipeline = "src.pipeline.run_pipeline:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

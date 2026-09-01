@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (large files — tracked via DVC or external storage)
+# Uncomment if you want to exclude raw data:
+# data/raw/
+# *.csv
+
+# Models (large binary files)
+*.pt
+*.pth
+*.h5
+*.pkl
+*.joblib
+
+# Colab
+/content/
+
+# Power BI cache
+*.pbix
+
+# Environment
+.env
