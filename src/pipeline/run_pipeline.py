@@ -28,6 +28,7 @@ from src.data.loader import (
     load_nasa_data,
     merge_datasets,
 )
+from src.data.validate import validate_all
 from src.features.engineering import build_xy, default_features, temporal_split
 from src.models.evaluate import resilience_class, resilience_index, report_metrics
 from src.models.train import train_random_forest
@@ -48,10 +49,17 @@ def run(
     """Execute the full pipeline and return key outputs."""
     crop_df = load_crop_data()
     nasa_df = load_nasa_data()
+
+    # --- E07 validation: fail loudly before any further processing ---
+    features = default_features()
+    validation = validate_all(crop_df, nasa_df, features=features)
+    if validation["warnings"]:
+        for w in validation["warnings"]:
+            print(f"[validation] {w}")
+
     nasa_yearly = aggregate_nasa_yearly(nasa_df)
     merged_df = merge_datasets(crop_df, nasa_yearly)
 
-    features = default_features()
     target = "Yield_kg_per_ha"
 
     X_train, X_test, y_train, y_test = temporal_split(
@@ -124,6 +132,7 @@ def run(
         "metrics": metrics,
         "summary": summary,
         "climate_indicators": indicators_df,
+        "validation": validation,
     }
 
 
