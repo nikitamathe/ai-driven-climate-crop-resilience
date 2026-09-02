@@ -1,0 +1,40 @@
+name: CI
+
+# Continuous integration (E08). Runs on every push and pull request to main.
+# Steps:
+#   1. Install pinned project dependencies.
+#   2. Run the full pytest suite.
+#   3. Run a smoke pipeline run (validates data, trains, writes outputs).
+#   4. Assert raw-data checksums match the recorded manifest (loud failure if
+#      a raw dataset is modified).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run test suite
+        run: python -m pytest
+
+      - name: Smoke pipeline run
+        run: python -m src.pipeline.run_pipeline
+
+      - name: Assert raw data checksums
+        run: python scripts/check_data_checksums.py --assert

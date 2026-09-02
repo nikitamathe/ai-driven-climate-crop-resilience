@@ -1,0 +1,25 @@
+# Base experiment configuration (E08).
+#
+# Every experiment is captured as a YAML file so a run is fully reproducible
+# from the config alone. `run_experiment.py` reads one of these files, runs the
+# pipeline, and writes a self-describing artifact bundle under
+# `data/processed/experiments/<config-hash>/`.
+#
+# Fields follow the E08 roadmap: seed, split cutoff, model, and model params.
+
+name: base-random-forest
+
+# Global random seed -> deterministic model training and (where used) sampling.
+seed: 42
+
+# Temporal split cutoff: models train on years < cutoff and test on years >= cutoff.
+split_cutoff: 2014
+
+# Model selection. Only "random_forest" is currently wired into the pipeline.
+model: random_forest
+
+# Model hyper-parameters (passed to the sklearn estimator).
+params:
+  n_estimators: 300
+  max_depth: 15
+  random_state: 42
