@@ -51,5 +51,5 @@ Thumbs.db
 # Generated experiment artifacts
 /data/processed/experiments/
 
-# Generated experiment artifacts
-/data/processed/experiments/
+# Generated benchmark artifacts (E09 HPC harness outputs)
+/data/processed/benchmarks/

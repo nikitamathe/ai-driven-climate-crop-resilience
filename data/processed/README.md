@@ -15,3 +15,17 @@ Not yet present:
 * `downscaled/` — generated only if `hpc/downscale_cnn.py` is run; the CNN
   demonstration has not been executed in this environment yet, so no directory
   exists and none is claimed.
+
+## Benchmark outputs (E09 HPC harness)
+
+`data/processed/benchmarks/` is written by `python -m hpc.benchmark` and is
+git-ignored. Each run creates a subdirectory (`<run_id>/`) containing:
+
+* `<run_id>.csv` — measured rows: workload (tile/cnn), backend/device, grid
+  size, tiles, workers, wall time, throughput, speedup, status.
+* `config.json` — the exact configuration used.
+* `speedup_vs_workers.png`, `scaling_by_grid_size.png` — diagnostic plots.
+
+All numbers are measured on the local CPU; GPU/absent-hardware rows are labelled
+`status="not run"` and are never fabricated. These are engineering performance
+measurements, not scientific climate results.
