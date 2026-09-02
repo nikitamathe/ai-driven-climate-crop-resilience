@@ -4,13 +4,17 @@ Phase 0 audit finding
 ---------------------
 The original notebook trained a Random Forest on features that included
 ``N_req_kg_per_ha``, ``P_req_kg_per_ha``, ``K_req_kg_per_ha`` and their
-``Total_*_kg`` products. Those columns are *derived directly from the target*:
+``Total_*_kg`` products. Those columns are *deterministically derived from
+the target* using crop-specific constant coefficients (e.g. rice
+N/Yield = 0.025, maize N/Yield = 0.027, cotton N/Yield = 0.027, chickpea
+N/Yield = 0.018):
 
-    N_req_kg_per_ha = Yield_kg_per_ha * 0.025
+    N_req_kg_per_ha = Yield_kg_per_ha * <crop-specific coefficient>
     Total_N_kg      = N_req_kg_per_ha * Area_ha
 
-This leaks the target variable into the model and inflates the reported R^2
-(0.97). The improved pipeline therefore excludes those columns.
+These are target-derived leakage features and must not be used as model
+inputs. This leaks the target variable into the model and inflates the
+reported R^2 (0.97). The improved pipeline therefore excludes those columns.
 """
 
 from __future__ import annotations
