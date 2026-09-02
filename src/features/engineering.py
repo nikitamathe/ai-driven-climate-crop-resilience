@@ -47,6 +47,17 @@ NASA_CLIMATE_COLUMNS = ["AvgTemp", "MaxTemp", "MinTemp"]
 
 OTHER_COLUMNS = ["Area_ha", "pH"]
 
+# Climate-stress indicators computed from the NASA POWER record (E06).
+# These are single-point indicators and are not district-specific.
+# Not included in default_features() yet — will be added after E06 validation.
+CLIMATE_INDICATOR_COLUMNS = [
+    "SPI_3",
+    "SPI_6",
+    "SPI_12",
+    "Rainfall_Anomaly",
+    "Temp_Anomaly",
+]
+
 
 def default_features(include_leaky: bool = False) -> list[str]:
     """Return the feature set used by the model.
