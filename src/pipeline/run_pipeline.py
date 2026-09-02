@@ -45,8 +45,15 @@ def run(
     cutoff_year: int = 2014,
     output_csv: Path | None = None,
     out_dir: Path | None = None,
+    model_params: dict | None = None,
 ) -> dict:
-    """Execute the full pipeline and return key outputs."""
+    """Execute the full pipeline and return key outputs.
+
+    ``model_params`` optionally overrides the Random Forest hyper-parameters
+    (n_estimators, max_depth, random_state). Defaults to the pipeline baseline.
+    """
+    model_params = model_params or {}
+
     crop_df = load_crop_data()
     nasa_df = load_nasa_data()
 
@@ -68,7 +75,7 @@ def run(
     print(f"Train rows: {len(X_train)} (years < {cutoff_year})")
     print(f"Test  rows: {len(X_test)} (years >= {cutoff_year})")
 
-    model = train_random_forest(X_train, y_train)
+    model = train_random_forest(X_train, y_train, **model_params)
     y_pred = model.predict(X_test)
     metrics = report_metrics(y_test, y_pred)
 
