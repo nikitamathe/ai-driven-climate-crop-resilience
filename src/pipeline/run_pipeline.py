@@ -20,6 +20,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from src.climate.indicators import write_climate_indicators
 from src.data.loader import (
     PROCESSED_DIR,
     aggregate_nasa_yearly,
@@ -31,8 +32,11 @@ from src.features.engineering import build_xy, default_features, temporal_split
 from src.models.evaluate import resilience_class, resilience_index, report_metrics
 from src.models.train import train_random_forest
 from src.visualization.plots import (
+    plot_anomaly_heatmap,
+    plot_climate_trend_table,
     plot_feature_importance,
     plot_resilience_distribution,
+    plot_spi_timeseries,
     plot_yield_vs_rainfall,
 )
 
@@ -104,9 +108,23 @@ def run(
     plot_yield_vs_rainfall(summary, imgs / "yield_vs_rainfall.png")
     plot_feature_importance(model, features, imgs / "feature_importance.png")
     plot_resilience_distribution(summary, imgs / "resilience_distribution.png")
+
+    # --- E06 climate indicators (separate from model output) ---
+    indicators_path = out_dir / "climate_indicators.csv"
+    indicators_df = write_climate_indicators(nasa_df, indicators_path)
+    print(f"Wrote {indicators_path} ({len(indicators_df)} rows, E06 indicators)")
+    plot_spi_timeseries(indicators_df, imgs / "spi_timeseries.png")
+    plot_anomaly_heatmap(indicators_df, imgs / "anomaly_heatmap.png")
+    plot_climate_trend_table(indicators_df, imgs / "climate_trend_table.png")
+
     print(f"Wrote plots to {imgs}")
 
-    return {"model": model, "metrics": metrics, "summary": summary}
+    return {
+        "model": model,
+        "metrics": metrics,
+        "summary": summary,
+        "climate_indicators": indicators_df,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
