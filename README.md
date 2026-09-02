@@ -96,9 +96,12 @@ Both documents record the limitations found during the audit.
 The Phase 0 forensic audit against the original project delivered these
 findings (full report in the open-review conversation; summarized here):
 
-1. **Data leakage** — the crop dataset's nutrient columns are computed from the
-   target (`N_req_kg_per_ha = Yield × 0.025`). The original model's R²≈0.97 is
-   largely a circular artifact, not skill.
+1. **Data leakage** — the crop dataset's nutrient columns are
+   deterministically derived from `Yield_kg_per_ha` using crop-specific
+   constant coefficients (e.g. rice N/Yield = 0.025, maize N/Yield = 0.027).
+   These are target-derived leakage features and must not be used as model
+   inputs. The original model's R²≈0.97 is largely a circular artifact, not
+   skill.
 2. **Static climate columns** — the district-level "weather" columns are
    per-crop constants (e.g. rice is always 25 °C / 1200 mm), not real
    observations.

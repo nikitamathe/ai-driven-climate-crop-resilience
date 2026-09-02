@@ -9,7 +9,7 @@ Ground truth used throughout this document (from the completed forensic audit):
 | Fact | Evidence |
 |------|----------|
 | Crop dataset: 50,765 rows, 1966–2017, 20 states, 311 districts, 4 crops | `data/raw/crop_yield/Custom_Crops_yield_Historical_Dataset.csv` |
-| Nutrient columns are computed from the target (`N_req = Yield × 0.025`) | verified row-level arithmetic |
+| Nutrient columns are deterministically derived from `Yield_kg_per_ha` using crop-specific constant coefficients (target-derived leakage features) | verified row-level arithmetic |
 | District "climate" columns are static per-crop constants | 4–6 unique values per column |
 | NASA POWER record is a single point, monthly, 1996–2020 | `data/raw/nasa_power/nasa_power_updated.csv` |
 | Original RF used a random 80/20 split, R²≈0.9728 | notebook cells 19–23 |
