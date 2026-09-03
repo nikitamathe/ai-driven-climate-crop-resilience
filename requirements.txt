@@ -44,3 +44,19 @@ pytest==8.3.3
 # Always re-run `python -m src.pipeline.run_pipeline` after changes to confirm
 # the core pipeline still imports without torch present.
 # -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Optional E10 geospatial resilience maps (src/visualization/geospatial.py)
+# -----------------------------------------------------------------------------
+# The core pipeline and tests never import geopandas, so they are NOT required
+# to run `python -m src.pipeline.run_pipeline` or `pytest`. Install them only if
+# you want to build the district choropleths / GeoJSON / folium HTML, e.g.:
+#
+#   pip install ".[maps]"        # or:
+#   pip install geopandas pyarrow folium
+#
+# versions below are the tested pins:
+# geopandas  1.1.4
+# pyarrow    25.0.1
+# folium     0.20.0
+# -----------------------------------------------------------------------------

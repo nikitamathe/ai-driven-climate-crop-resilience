@@ -23,6 +23,16 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.3.3"]
 
+# Optional E10 geospatial resilience maps (src/visualization/geospatial.py).
+# Needed only to build the district choropleths / GeoJSON / folium HTML; the
+# core pipeline and tests never import geopandas, so they install without it.
+#   pip install ".[maps]"
+maps = [
+    "geopandas>=1.1.4",
+    "pyarrow>=25.0.1",
+    "folium>=0.20.0",
+]
+
 # Optional CNN demonstration (hpc/downscale_cnn.py). Installed separately from
 # the official PyTorch wheel index so the CPU/CUDA build is correct:
 #   pip install ".[cnn]" --index-url https://download.pytorch.org/whl/cpu

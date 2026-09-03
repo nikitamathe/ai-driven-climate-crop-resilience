@@ -29,3 +29,34 @@ git-ignored. Each run creates a subdirectory (`<run_id>/`) containing:
 All numbers are measured on the local CPU; GPU/absent-hardware rows are labelled
 `status="not run"` and are never fabricated. These are engineering performance
 measurements, not scientific climate results.
+
+## Geospatial outputs (E10 — district resilience maps)
+
+`data/processed/geojson/` is written by `python -m src.visualization.geospatial`
+and is git-ignored. It contains:
+
+* `resilience_district_<tag>.geojson` — merged district polygons with mean
+  `Resilience_Index`, min/max, record count, and `% vulnerable` per district.
+* `choropleth_index_<tag>.png` / `choropleth_vulnerability_<tag>.png` — static
+  choropleth maps.
+* `resilience_map_<tag>.html` — interactive Folium map.
+
+The `<tag>` is the filter used (`all`, or a crop name / a year). Aggregations
+are computed independently for each filter.
+
+### E10 join coverage & honesty
+
+The maps are a **geospatial visualization/aggregation layer** over the existing
+model output — they do **not** perform climate downscaling. The NASA POWER
+climate input remains a single spatial point (E06); the maps simply spatialize
+district-level model-output resilience using administrative boundaries, joined
+via a name-standardization map (`data/geo/name_mapping.json`).
+
+Spatial validity depends on that district-name join, so unmatched districts are
+always counted and reported. On the current boundary dataset (DataMeet Census
+2011) the join covers 305/311 districts (~98%); the 6 unmatched model districts
+(Champaran, Shahabad, Singhbhum, 24 Parganas, Midnapur, West Dinajpur) were
+split into or merged with modern districts and have no single valid geometry, so
+they are left unmatched rather than forced into a modern district. See
+`data/geo/name_mapping.json` (or the builder's printed report) for the exact map
+and provenance.
