@@ -19,6 +19,7 @@ dependencies = [
     "joblib>=1.4.2",
     "PyYAML>=6.0.2",
     "xgboost>=3.4.1",
+    "shap>=0.52.0",
 ]
 
 [project.optional-dependencies]

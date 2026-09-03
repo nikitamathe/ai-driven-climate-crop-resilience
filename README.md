@@ -138,6 +138,27 @@ python -m pytest
 Covers data loading, the leakage invariants, temporal split behaviour, and the
 resilience index/classification boundaries.
 
+## Model explainability (E04, SHAP)
+
+`src/models/explain.py` explains the tuned Random Forest and XGBoost models
+(from E03) with `shap.TreeExplainer`, and `src/visualization/shap_plots.py`
+renders beeswarm summary, dependence (temperature & rainfall) and
+mean-|SHAP|-vs-permutation-importance plots.
+
+```bash
+python -m src.models.explain --out-dir data/processed/shap
+```
+
+**SHAP is attribution, not causation.** SHAP values describe how much each
+feature contributed to a specific model's predictions for a *specific* dataset;
+they do **not** establish cause-and-effect relationships between climate
+variables and yield. Treat these plots as attribution diagnostics, never as
+causal claims.
+
+Leakage note: attributions use `tree_path_dependent` SHAP (no interventional
+background reference set) and are computed on the held-out temporal test set,
+so no test-year information enters the explanation.
+
 ## Reproducing the original notebook
 
 `notebooks/ML_Code.ipynb` preserves the original methodology with paths
