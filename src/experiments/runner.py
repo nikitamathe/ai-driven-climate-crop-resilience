@@ -73,6 +73,7 @@ def run_experiment(
     result = run_pipeline(
         cutoff_year=int(config["split_cutoff"]),
         model_params=params,
+        model=config["model"],
     )
 
     run_dir = Path(out_root) / h

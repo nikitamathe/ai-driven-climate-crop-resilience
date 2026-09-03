@@ -20,6 +20,7 @@ matplotlib==3.9.2
 seaborn==0.13.2
 scikit-image==0.24.0
 joblib==1.4.2
+xgboost==3.4.1
 
 # Experiment configuration / artifact logging (E08)
 PyYAML==6.0.2

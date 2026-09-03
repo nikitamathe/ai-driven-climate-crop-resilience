@@ -49,7 +49,7 @@ class TestLoadConfig:
 
     def test_unsupported_model(self, tmp_path):
         p = tmp_path / "bad_model.yaml"
-        p.write_text(yaml.safe_dump({"name": "x", "seed": 1, "split_cutoff": 2014, "model": "xgboost", "params": {}}))
+        p.write_text(yaml.safe_dump({"name": "x", "seed": 1, "split_cutoff": 2014, "model": "svm", "params": {}}))
         with pytest.raises(ConfigError, match="unsupported model"):
             load_config(p)
 

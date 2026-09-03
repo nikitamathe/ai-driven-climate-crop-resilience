@@ -1,0 +1,27 @@
+# E03 tuned XGBoost experiment configuration.
+#
+# The hyper-parameters below are placeholders discovered by
+# `python -m src.models.tuning` (year-grouped RandomizedSearchCV). Running
+# the tuning script will populate the actual best values.
+#
+# `model: xgboost` selects the XGBoost estimator via `run_experiment.py`.
+
+name: tuned-xgboost
+
+# Global random seed -> deterministic model training and search.
+seed: 42
+
+# Temporal split cutoff: models train on years < cutoff and test on years >= cutoff.
+split_cutoff: 2014
+
+# Model selection. "xgboost" is wired into the pipeline (E03).
+model: xgboost
+
+# Tuned model hyper-parameters (year-grouped CV best values).
+params:
+  n_estimators: 300
+  learning_rate: 0.1
+  max_depth: 5
+  subsample: 0.8
+  colsample_bytree: 0.8
+  random_state: 42
