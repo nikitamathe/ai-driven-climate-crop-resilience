@@ -53,3 +53,9 @@ Thumbs.db
 
 # Generated benchmark artifacts (E09 HPC harness outputs)
 /data/processed/benchmarks/
+
+# Downloaded district boundary dataset (E10) — large external shapefile, not committed
+/data/geodata/
+
+# Generated geospatial outputs (E10)
+/data/processed/geojson/
