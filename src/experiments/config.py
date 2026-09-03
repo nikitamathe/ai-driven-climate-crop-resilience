@@ -22,8 +22,9 @@ EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
 # Required top-level keys in every experiment config.
 REQUIRED_KEYS = ("name", "seed", "split_cutoff", "model", "params")
 
-# Supported models (see runner). Only random_forest is wired in for now.
-SUPPORTED_MODELS = ("random_forest",)
+# Supported models (see runner). random_forest is the pipeline baseline;
+# xgboost is added for E03 model comparison and tuning.
+SUPPORTED_MODELS = ("random_forest", "xgboost")
 
 
 class ConfigError(Exception):

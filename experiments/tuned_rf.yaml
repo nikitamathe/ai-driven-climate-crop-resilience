@@ -1,0 +1,26 @@
+# E03 tuned Random Forest experiment configuration.
+#
+# The hyper-parameters below are placeholders discovered by
+# `python -m src.models.tuning` (year-grouped RandomizedSearchCV). Running
+# the tuning script will populate the actual best values; until then the
+# defaults mirror the base random forest so the pipeline stays reproducible.
+#
+# `model: random_forest` selects the RF estimator via `run_experiment.py`.
+
+name: tuned-random-forest
+
+# Global random seed -> deterministic model training and search.
+seed: 42
+
+# Temporal split cutoff: models train on years < cutoff and test on years >= cutoff.
+split_cutoff: 2014
+
+# Model selection. "random_forest" is wired into the pipeline.
+model: random_forest
+
+# Tuned model hyper-parameters (year-grouped CV best values).
+params:
+  n_estimators: 300
+  max_depth: 15
+  min_samples_split: 2
+  random_state: 42

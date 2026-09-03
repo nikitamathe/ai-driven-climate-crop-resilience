@@ -41,16 +41,36 @@ from src.visualization.plots import (
     plot_yield_vs_rainfall,
 )
 
+
+def _train_model(model_name: str, X_train, y_train, **params):
+    """Train the named model. ``random_forest`` is the baseline; ``xgboost``
+    is the E03 alternative. Only these two are wired into the pipeline."""
+    if model_name == "random_forest":
+        return train_random_forest(X_train, y_train, **params)
+    if model_name == "xgboost":
+        from xgboost import XGBRegressor
+
+        params = dict(params)
+        params.setdefault("random_state", 42)
+        params.setdefault("n_estimators", 300)
+        params.setdefault("verbosity", 0)
+        params.setdefault("n_jobs", -1)
+        return XGBRegressor(**params).fit(X_train, y_train)
+    raise ValueError(f"Unsupported model: {model_name!r}")
+
 def run(
     cutoff_year: int = 2014,
     output_csv: Path | None = None,
     out_dir: Path | None = None,
     model_params: dict | None = None,
+    model: str = "random_forest",
 ) -> dict:
     """Execute the full pipeline and return key outputs.
 
-    ``model_params`` optionally overrides the Random Forest hyper-parameters
-    (n_estimators, max_depth, random_state). Defaults to the pipeline baseline.
+    ``model_params`` optionally overrides the model hyper-parameters
+    (n_estimators, max_depth, random_state for RF; corresponding names for
+    XGBoost). ``model`` selects the estimator: ``"random_forest"`` (default)
+    or ``"xgboost"`` (E03).
     """
     model_params = model_params or {}
 
@@ -75,11 +95,11 @@ def run(
     print(f"Train rows: {len(X_train)} (years < {cutoff_year})")
     print(f"Test  rows: {len(X_test)} (years >= {cutoff_year})")
 
-    model = train_random_forest(X_train, y_train, **model_params)
-    y_pred = model.predict(X_test)
+    model_obj = _train_model(model, X_train, y_train, **model_params)
+    y_pred = model_obj.predict(X_test)
     metrics = report_metrics(y_test, y_pred)
 
-    merged_df["Predicted_Yield"] = model.predict(build_xy(merged_df, features)[0])
+    merged_df["Predicted_Yield"] = model_obj.predict(build_xy(merged_df, features)[0])
     merged_df["Resilience_Index"] = resilience_index(
         merged_df["Yield_kg_per_ha"], merged_df["Predicted_Yield"]
     )
@@ -121,7 +141,7 @@ def run(
 
     imgs = out_dir  # re-use processed dir for plots to keep docs/images clean
     plot_yield_vs_rainfall(summary, imgs / "yield_vs_rainfall.png")
-    plot_feature_importance(model, features, imgs / "feature_importance.png")
+    plot_feature_importance(model_obj, features, imgs / "feature_importance.png")
     plot_resilience_distribution(summary, imgs / "resilience_distribution.png")
 
     # --- E06 climate indicators (separate from model output) ---
@@ -135,7 +155,7 @@ def run(
     print(f"Wrote plots to {imgs}")
 
     return {
-        "model": model,
+        "model": model_obj,
         "metrics": metrics,
         "summary": summary,
         "climate_indicators": indicators_df,

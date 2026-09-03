@@ -10,12 +10,14 @@ def train_random_forest(
     y_train,
     n_estimators: int = 300,
     max_depth: int = 15,
+    min_samples_split: int | float = 2,
     random_state: int = 42,
 ) -> RandomForestRegressor:
     """Train a Random Forest regressor on yield features."""
     model = RandomForestRegressor(
         n_estimators=n_estimators,
         max_depth=max_depth,
+        min_samples_split=min_samples_split,
         random_state=random_state,
         n_jobs=-1,
     )
