@@ -271,7 +271,9 @@ def report_coverage(cov: JoinCoverage) -> None:
 # ---------------------------------------------------------------------------
 
 def aggregate_resilience(merged_gdf, crop: str | None = None,
-                         year: int | None = None) -> "gpd.GeoDataFrame":
+                         year: int | None = None,
+                         ci_low_col: str | None = None,
+                         ci_high_col: str | None = None) -> "gpd.GeoDataFrame":
     """Aggregate resilience to the district level from a merged GeoDataFrame.
 
     ``merged_gdf`` must carry ``boundary_district`` / ``boundary_state`` keys.
@@ -279,6 +281,13 @@ def aggregate_resilience(merged_gdf, crop: str | None = None,
       ``resilience_index_mean``, ``resilience_index_min``,
       ``resilience_index_max``, ``resilience_records``, ``pct_vulnerable``.
     Optional ``crop`` and ``year`` filters are applied before aggregating.
+
+    E05 backward-compatible extension: if ``ci_low_col``/``ci_high_col`` name
+    prediction-interval bound columns (e.g. ``Pred_Yield_Lo``/``Pred_Yield_Hi``)
+    that exist in ``merged_gdf``, an additional
+    ``prediction_ci_width`` column is aggregated (mean high - low). When the
+    columns are absent or the flags are ``None``, the output is identical to
+    the pre-E05 behavior.
     """
     import geopandas as gpd
 
@@ -288,13 +297,31 @@ def aggregate_resilience(merged_gdf, crop: str | None = None,
     if year is not None:
         df = df[df["Year"] == int(year)]
 
+    agg_spec = {
+        "resilience_index_mean": ("Resilience_Index", "mean"),
+        "resilience_index_min": ("Resilience_Index", "min"),
+        "resilience_index_max": ("Resilience_Index", "max"),
+        "resilience_records": ("Resilience_Index", "size"),
+        "pct_vulnerable": (
+            "Resilience_Index",
+            lambda s: 100.0 * (s < _VULNERABLE_THRESHOLD).mean(),
+        ),
+    }
+    has_ci = (
+        ci_low_col is not None and ci_high_col is not None
+        and ci_low_col in df.columns and ci_high_col in df.columns
+    )
+    if has_ci:
+        df = df.assign(
+            _ci_width=(df[ci_high_col].astype(float) - df[ci_low_col].astype(float))
+        )
+        agg_spec["prediction_ci_width"] = ("_ci_width", "mean")
+
+    # NOTE: pass the dict via **kwargs. Passing a dict *variable* positionally
+    # with (col, func) values trips a pandas 2.2.x handling quirk, whereas the
+    # inline keyword form is correct.
     grouped = df.groupby(["boundary_state", "boundary_district"]).agg(
-        resilience_index_mean=("Resilience_Index", "mean"),
-        resilience_index_min=("Resilience_Index", "min"),
-        resilience_index_max=("Resilience_Index", "max"),
-        resilience_records=("Resilience_Index", "size"),
-        pct_vulnerable=("Resilience_Index",
-                        lambda s: 100.0 * (s < _VULNERABLE_THRESHOLD).mean()),
+        **agg_spec
     ).reset_index()
 
     # Reattach one geometry per district for spatial output.
