@@ -140,6 +140,43 @@ resilience index/classification boundaries.
 
 ## Model explainability (E04, SHAP)
 
+## Uncertainty estimation (E05)
+
+E05 adds time-aware conformal prediction intervals to quantify uncertainty
+around the model's crop-yield predictions.
+
+The implementation uses a proper/calibration time split so that calibration
+data comes from historical training years rather than future test years.
+Prediction intervals, empirical coverage, and interval-width statistics are
+integrated into the existing pipeline.
+
+### Key capabilities
+
+- Time-aware conformal uncertainty estimation
+- Proper/calibration temporal split
+- Prediction lower and upper bounds
+- Prediction interval coverage calculations
+- Interval-width analysis by crop
+- Uncertainty visualization
+- Integration with the existing prediction pipeline
+- Preservation of the baseline point-prediction model and metrics
+
+### Validation
+
+- 198 tests passing
+- Raw-data checksum validation passes
+- Existing baseline pipeline behavior preserved
+- No raw datasets modified
+- Generated uncertainty artifacts excluded from version control
+
+### Scientific considerations
+
+Calibration uses historical training years rather than future test years,
+maintaining temporal separation and preventing test-year leakage.
+
+Prediction intervals represent model uncertainty estimates and should not be
+interpreted as causal claims about climate variables or crop yield.
+
 `src/models/explain.py` explains the tuned Random Forest and XGBoost models
 (from E03) with `shap.TreeExplainer`, and `src/visualization/shap_plots.py`
 renders beeswarm summary, dependence (temperature & rainfall) and
